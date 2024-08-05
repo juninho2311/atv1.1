@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<cabeça>
+    <meta charset="UTF-8">
+    <title>Par ou Ímpar</title>
+</cabeçalho>
+<corpo>
+    <h1>Par ou Ímpar</h1>
+
+    <formulário id="formularioParImpar">
+        <label for="escolhaParImpar">Escolha Par ou Ímpar:</label>
+        <select id="escolhaParImpar" name="escolhaParImpar" obrigatório>
+            <opção value="par">Par</opção>
+            <option value="impar">Impar</option>
+        </selecionar>
+        <br>
+
+        <label for="numeroUsuario">Seu número (entre 1 e 9):</label>
+        <input type="number" id="numeroUsuario" name="numeroUsuario" min="1" max="9" obrigatório>
+        <br>
+
+        <button type="submit">Jogar</button>
+    </form>
+
+    <div id="resultadoJogo"></div>
+
+    <roteiro>
+        const formularioParImpar = document.getElementById('formularioParImpar');
+        const resultadoJogo = document.getElementById('resultadoJogo');
+
+        formularioParImpar.addEventListener('enviar', função(evento) {
+            evento.preventDefault();
+
+            const escolhaParImpar = document.getElementById('escolhaParImpar').value;
+            const numeroUsuario = parseInt(document.getElementById('numeroUsuario').value);
+
+            se (numeroUsuário < 1 || numeroUsuário > 9) {
+                resultadoJogo.innerHTML = 'Número inválido. Digite um número entre 1 e 9.';
+                retornar;
+            }
+
+            const numeroComputador = Math.floor(Math.random() * 10); // Gera um número aleatório entre 0 e 9
+            const soma = numeroUsuario + numeroComputador;
+
+            deixe resultado;
+            se (soma % 2 === 0) {
+                resultado = (escolhaParImpar === 'par') ? 'Você venceu!' : 'Você perdeu.';
+            } outro {
+                resultado = (escolhaParImpar === 'impar') ? 'Você venceu!' : 'Você perdeu.';
+            }
+
+            resultadoJogo.innerHTML = `Você escolheu ${escolhaParImpar}, seu número foi ${numeroUsuario}, o número do computador foi ${numeroComputador}. ${resultado}`;
+        });
+    </script>
+</corpo>
+</html>
