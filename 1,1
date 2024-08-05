@@ -1,0 +1,27 @@
+<!DOCTYPE html >
+< html  lang =" pt-br " >
+< cabeça >
+    < meta  charset =" UTF-8 " >
+    < meta  name =" viewport " content =" width=largura-do-dispositivo, escala-inicial=1.0 " >
+    < title > Atividade 1 </ title >
+</ cabeça >
+< corpo >
+    < roteiro >
+        alert ( "Olá, seja bem-vindo ao selecionador de notas!!" )
+       let  nota  =   prompt ( "Digite a nota do aluno:" )
+       if  ( nota  >  7  &&  nota  <  10 )  {
+        alert  ( "O aluno está aprovado!!" ) ;
+       }
+       senão  if  ( nota  >  4  &&  nota  <  6 )  {
+        alert ( "O aluno está de recuperação!!" ) ;
+       }
+       senão  se  ( nota  <  4 )  {
+        alert ( "O aluno está reprovado!!" )
+       }
+       outro  {
+        alert ( "Parabéns, você tirou 10!!" )
+       }
+
+    </ script >
+</ corpo >
+</ html >
