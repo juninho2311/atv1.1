@@ -1,0 +1,26 @@
+function validaEntrada(texto) {
+
+    var regex = /^[a-zA-Z]+$/;
+    retornar regex.test(texto);
+}
+
+
+função processadorPalavra() {
+    var palavra = prompt("Digite uma palavra:");
+
+
+    if (!validaEntrada(palavra)) {
+        console.log("Entrada inválida. Por favor, digite apenas letras.");
+        retornar;
+    }
+
+    var palavraMaiuscula = palavra.toUpperCase();
+
+
+    for (var i = 0; i < palavraMaiuscula.length; i++) {
+        console.log(palavraMaiuscula[i]);
+    }
+}
+
+
+processarPalavra();
