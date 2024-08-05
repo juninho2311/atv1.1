@@ -1,0 +1,46 @@
+// Função para validar o nome da cidade
+function validateCityName(city) {
+  // Expressão regular para permitir apenas letras, espaços e traços
+  const cityRegex = /^[a-zA-Z\s-]+$/;
+  return cityRegex.test(city);
+}
+
+// Função assíncrona para obter dados meteorológicos de uma cidade
+async function getWeather(city) {
+  // Sua chave de API da OpenWeatherMap
+  const apiKey = 'SUA_CHAVE_API_AQUI';
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=pt`;
+
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erro ao buscar dados meteorológicos:', error);
+    return null;
+  }
+}
+
+// Função principal para solicitar a cidade ao usuário e exibir a temperatura
+async function main() {
+  const city = prompt('Por favor, insira o nome da cidade:');
+
+  if (validateCityName(city)) {
+    const weatherData = await getWeather(city);
+    if (weatherData) {
+      const temperature = weatherData.main.temp;
+      console.log(`A temperatura atual em ${city} é ${temperature}°C.`);
+    } else {
+      console.log('Não foi possível obter os dados meteorológicos.');
+    }
+  } else {
+    console.log('Nome da cidade inválido. Por favor, insira apenas letras, espaços e traços.');
+  }
+}
+
+// Chama a função principal
+main();
