@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<cabeça>
+    <meta charset="UTF-8">
+    <meta http-equiv="Compatível com X-UA" content="IE=edge">
+    <meta name="viewport" content="largura=largura-do-dispositivo, escala-inicial=1.0">
+    <title>Atividade 3</title>
+    <estilo>
+        #credenciais {
+            Mostrar nenhum;
+        }
+    </estilo>
+</cabeçalho>
+<corpo>
+    <h1>Formulário</h1>
+    <form ação="#">
+        <p>Digite seu nome:</p>
+        <tipo de entrada="texto" nome="" id="nome">
+        <br>
+        <p>Digite seu ano de Nascimento:</p>
+        <tipo de entrada="texto" id="ano"> <br> <br>
+
+        <button onclick="VerificarIdade()">Verificar</button>
+        <br> <br>
+        <p id="resultado"></p>
+        <br>
+        <br>
+
+        <div id="credenciais">
+            <p>Digite seu nome de usuário:</p>
+            <tipo de entrada="texto" id="nome de usuário"> <br> <br>
+            <p>Digite sua senha:</p>
+            <tipo de entrada="senha" id="senha"> <br> <br>
+            <button onclick="EnviarCredenciais()">Enviar</button>
+        </div>
+
+    </form>
+
+    <roteiro>
+        função VerificarIdade() {
+            deixe nome = document.getElementById("nome").valor;
+            deixe ano = document.getElementById("ano").value;
+            deixe idade = 2024 - Número(ano)
+
+            se (idade > 17) {
+                let resultado = "Bem-vindo " + nome;
+                document.getElementById("resultado").innerHTML = resultado;
+                document.getElementById("credenciais").style.display = "bloco";
+            } outro {
+                let resultado = "Você não pode continuar";
+                document.getElementById("resultado").innerHTML = resultado;
+                document.getElementById("credenciais").style.display = "nenhum";
+            }
+        }
+
+        function EnviarCredenciais() {
+            deixe nome de usuário = document.getElementById("nome de usuário").value;
+            deixe senha = document.getElementById("senha").value;
+            // Aqui você pode adicionar uma lógica para enviar as credenciais para onde desejar.
+            console.log("Nome de usuário:", nome de usuário);
+            console.log("Senha:", senha);
+        }
+    </script>
