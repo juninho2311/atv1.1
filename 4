@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+<cabeça>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="largura=largura-do-dispositivo, escala-inicial=1.0">
+    <title>Documento</title>
+
+    <estilo>
+        imagem{
+            largura: 300px;
+            altura: automático;
+        }
+    </estilo>
+</cabeçalho>
+<corpo>
+
+    <h2 id="nomeGato"></h2>
+    <img id="imgCat" src="" alt="">
+
+    <button id="carregar">carregar mais imagens</button>
+
+    <roteiro>
+        deixe caixa = document.getElementById("informações");
+
+    //Variável declarada fora do escopo da função para poder ser acessado pelo console.log()
+        deixe dados;
+
+        deixe num = Math.floor(Math.random() * 20)
+
+        deixe url = "https://api.thecatapi.com/v1/images/search?limit=20&has_breeds=true&order=RANDOM&api_key=live_ke8qOyFByqYf8RoSQu4hH8CaDfLZQuzyjaJ6MMzhPPl1fKp6HcCKPNEoLaspqQdC";
+        dados = async() => (aguarde buscar(url)).json();
+
+        btt = document.getElementById("carregar");
+
+
+        btt.onclick = () => {
+            dados().então((res) =>{
+                deixe img = document.getElementById("imgCat").src= res[0].url;
+                deixe nome = document.getElementById("nomeCat").innerHTML = res[0].breeds[0].name;
+
+                console.log(res);
+                console.log(num);
+
+        }).catch((erro) =>{
+            alerta(erro);
+        })
+
+        }
+    </script>
