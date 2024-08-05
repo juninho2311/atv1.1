@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt">
+<cabeça>
+    <meta charset="UTF-8">
+    <meta http-equiv="Compatível com X-UA" content="IE=edge">
+    <meta name="viewport" content="largura=largura-do-dispositivo, escala-inicial=1.0">
+    <title>Documento</title>
+</cabeçalho>
+<corpo>
+    <roteiro>
+        const palavras = ['Morango', 'Aeromoça', 'Tecnologia', 'Sabedoria', Sustentabilidade'];
+const palavraSorteada = palavras[Math.floor(Math.random() * palavras.length)];
+const letrasPalavra = new Set(palavraSorteada);
+const letrasCertas = new Set();
+const letrasErradas = new Set();
+
+deixe tentativas = 6;
+
+função mostrarPalavraEscondida() {
+    deixe palavraEscondida = '';
+    for (letra da palavraSorteada) {
+        if (letrasCertas.has(letra)) {
+            palavraEscondida += letra;
+        } outro {
+            palavraEscondida += '_';
+        }
+    }
+    retornar palavraEscondida;
+}
+
+função jogarForca(letra) {
+    if (letrasCertas.has(letra) || letrasErradas.has(letra)) {
+        return 'Letra já escolhida. Tente outra.';
+    }
+
+    if (letrasPalavra.has(letra)) {
+        letrasCertas.add(letra);
+        if (letrasCertas.size === letrasPalavra.size) {
+            retornar 'Parabéns! Você venceu!';
+        }
+    } outro {
+        letrasErradas.add(letra);
+        tentativas--;
+        se (tentativas === 0) {
+            retornar 'Fim de jogo. A palavra era: ' + palavraSorteada;
+        }
+    }
+
+    return mostrarPalavraEscondida();
+}
+    </script>
+</corpo>
+</html>
