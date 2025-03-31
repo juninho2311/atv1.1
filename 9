@@ -1,0 +1,281 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+// Definindo a classe de Tarefa
+class Task {
+  String title;
+  String status;
+  String priority;
+
+  Task({required this.title, required this.status, required this.priority});
+
+  Map<String, String> toMap() {
+    return {
+      'title': title,
+      'status': status,
+      'priority': priority,
+    };
+  }
+
+  static Task fromMap(Map<String, String> map) {
+    return Task(
+      title: map['title']!,
+      status: map['status']!,
+      priority: map['priority']!,
+    );
+  }
+}
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: TaskManager(),
+    );
+  }
+}
+
+class TaskManager extends StatefulWidget {
+  @override
+  _TaskManagerState createState() => _TaskManagerState();
+}
+
+class _TaskManagerState extends State<TaskManager> {
+  List<Task> tasks = [];
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  // Carregar as tarefas do SharedPreferences
+  _loadTasks() async {
+    prefs = await SharedPreferences.getInstance();
+    List<String>? savedTasks = prefs.getStringList('tasks');
+    if (savedTasks != null) {
+      setState(() {
+        tasks = savedTasks
+            .map((taskData) => Task.fromMap(
+                Map<String, String>.from(
+                    taskData.split(',').asMap().map((i, e) => MapEntry(i.toString(), e)))))
+            .toList();
+      });
+    }
+  }
+
+  // Salvar as tarefas no SharedPreferences
+  _saveTasks() {
+    List<String> tasksData = tasks.map((task) {
+      return '${task.title},${task.status},${task.priority}';
+    }).toList();
+    prefs.setStringList('tasks', tasksData);
+  }
+
+  // Adicionar uma nova tarefa
+  _addTask(String title, String priority) {
+    setState(() {
+      tasks.add(Task(title: title, status: 'Nova', priority: priority));
+    });
+    _saveTasks();
+  }
+
+  // Editar uma tarefa
+  _editTask(int index, String title, String priority) {
+    setState(() {
+      tasks[index].title = title;
+      tasks[index].priority = priority;
+    });
+    _saveTasks();
+  }
+
+  // Deletar uma tarefa
+  _deleteTask(int index) {
+    setState(() {
+      tasks.removeAt(index);
+    });
+    _saveTasks();
+  }
+
+  // Widget para destacar a tarefa com alta prioridade
+  Widget _taskItem(Task task, int index) {
+    Color priorityColor;
+    if (task.priority == 'Alta') {
+      priorityColor = Colors.red;
+    } else if (task.priority == 'Baixa') {
+      priorityColor = Colors.green;
+    } else {
+      priorityColor = Colors.blue;
+    }
+
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: Card(
+        color: priorityColor.withOpacity(0.1),
+        child: ListTile(
+          title: Text(task.title),
+          subtitle: Text('${task.status} - ${task.priority}'),
+          onTap: () {
+            // Aqui podemos abrir o editor de tarefa, por exemplo
+            _showEditDialog(index);
+          },
+        ),
+      ),
+      secondaryActions: [
+        IconSlideAction(
+          caption: 'Excluir',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () => _deleteTask(index),
+        ),
+      ],
+    );
+  }
+
+  // Exibir o diálogo para editar uma tarefa
+  _showEditDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final task = tasks[index];
+        TextEditingController titleController = TextEditingController(text: task.title);
+        String selectedPriority = task.priority;
+        return AlertDialog(
+          title: Text('Editar Tarefa'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: 'Título'),
+              ),
+              DropdownButton<String>(
+                value: selectedPriority,
+                onChanged: (value) {
+                  setState(() {
+                    selectedPriority = value!;
+                  });
+                },
+                items: ['Alta', 'Normal', 'Baixa']
+                    .map((priority) => DropdownMenuItem(
+                          child: Text(priority),
+                          value: priority,
+                        ))
+                    .toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _editTask(index, titleController.text, selectedPriority);
+                Navigator.of(context).pop();
+              },
+              child: Text('Salvar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Gerenciador de Tarefas'),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Novas'),
+              Tab(text: 'Em Andamento'),
+              Tab(text: 'Concluídas'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // Tela de Tarefas Novas
+            _taskListView('Nova'),
+            // Tela de Tarefas em Andamento
+            _taskListView('Em andamento'),
+            // Tela de Tarefas Concluídas
+            _taskListView('Concluída'),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _showAddTaskDialog,
+          child: Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+
+  // Função para mostrar o diálogo de adicionar tarefa
+  _showAddTaskDialog() {
+    String title = '';
+    String priority = 'Normal';
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Nova Tarefa'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  title = value;
+                },
+                decoration: InputDecoration(labelText: 'Título'),
+              ),
+              DropdownButton<String>(
+                value: priority,
+                onChanged: (value) {
+                  setState(() {
+                    priority = value!;
+                  });
+                },
+                items: ['Alta', 'Normal', 'Baixa']
+                    .map((priority) => DropdownMenuItem(
+                          child: Text(priority),
+                          value: priority,
+                        ))
+                    .toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (title.isNotEmpty) {
+                  _addTask(title, priority);
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text('Adicionar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Função para listar as tarefas por status
+  Widget _taskListView(String status) {
+    List<Task> filteredTasks = tasks.where((task) => task.status == status).toList();
+    return ListView.builder(
+      itemCount: filteredTasks.length,
+      itemBuilder: (context, index) {
+        return _taskItem(filteredTasks[index], tasks.indexOf(filteredTasks[index]));
+      },
+    );
+  }
+}
