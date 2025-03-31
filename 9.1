@@ -1,0 +1,65 @@
+import React, { useState, useEffect } from 'react';
+
+const WeatherForecast = () => {
+  const [location, setLocation] = useState(null);
+  const [weatherData, setWeatherData] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Função para obter a geolocalização do usuário
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+        },
+        (err) => {
+          setError('Erro ao obter localização');
+        }
+      );
+    } else {
+      setError('Geolocalização não é suportada pelo navegador');
+    }
+  };
+
+  // Função para buscar a previsão do tempo
+  const getWeather = async (lat, lon) => {
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_sum`;
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setWeatherData(data);
+    } catch (err) {
+      setError('Erro ao obter dados do tempo');
+    }
+  };
+
+  // Efeito para buscar a previsão do tempo assim que a localização for obtida
+  useEffect(() => {
+    if (location) {
+      getWeather(location.latitude, location.longitude);
+    }
+  }, [location]);
+
+  // Chama a função para pegar a localização ao carregar a tela
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  return (
+    <div>
+      <h1>Previsão do Tempo</h1>
+      {error && <p>{error}</p>}
+      {weatherData ? (
+        <div>
+          <h2>Temperatura Atual: {weatherData.current_weather.temperature}°C</h2>
+          <h3>Precipitação: {weatherData.current_weather.precipitation} mm</h3>
+        </div>
+      ) : (
+        <p>Carregando previsão...</p>
+      )}
+    </div>
+  );
+};
+
+export default WeatherForecast;
